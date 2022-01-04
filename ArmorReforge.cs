@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ModLoader;
 using System.Collections.Generic;
 using System;
@@ -8,10 +8,10 @@ namespace ArmorReforge
 {
     internal static class ArmorReforgeUtils
     {
-        public static bool IsArmor(this Item item) => (item.headSlot != -1 || item.bodySlot != -1 || item.legSlot != -1);// && !item.vanity);
+        public static bool IsArmor(this Item item) => (item.headSlot != -1 || item.bodySlot != -1 || item.legSlot != -1); // && !item.vanity);
         public static void OverrideReforge(this Item item) => item.accessory = (item.IsArmor() && !item.accessory) || item.accessory;
         public static void RerollArmor(this Item item) => item.Prefix(-2);
-        public static int ArmorRecipeValue(this Item item)
+        public static int ArmorRecipeValue(this Item item) // Get armor recipe value.
         {
             for (int i = 0; i < Recipe.numRecipes; i++)
             {
@@ -60,17 +60,14 @@ namespace ArmorReforge
         { 
             public override void PostUpdate()
             {
-                //Main.NewText(Main.mouseItem.canBePlacedInVanityRegardlessOfConditions);
                 if (Main.InReforgeMenu && Main.reforgeItem.IsAir && !Main.mouseItem.IsAir)
                 {
-                    //Main.NewText($"Vanity: {Main.mouseItem.vanity} headSlot: {Main.mouseItem.headSlot} bodySlot: {Main.mouseItem.bodySlot} legSlot: {Main.mouseItem.legSlot}");
                     Main.mouseItem.OverrideReforge();
                     if (Main.mouseItem.IsArmor() && Main.mouseItem.vanity)
                     {
                         Main.mouseItem.vanity = false;
                         Main.mouseItem.canBePlacedInVanityRegardlessOfConditions = true;
                     }
-                    //Main.NewText(Main.mouseItem.accessory);
                 }
             }
         }
@@ -81,12 +78,11 @@ namespace ArmorReforge
              
                 if (item.IsArmor())
                 {
-                    //Main.NewText("ArmorReforgeValue: " + reforgePrice + " discount: " + canApplyDiscount + " rarity: " + item.rare);
                     if (item.value < 2 || reforgePrice < 2)
                     {
                         item.value = item.ArmorRecipeValue();
                     }
-                    else // Make armor reforging a bit more expensive
+                    else // Make armor reforging a bit more expensive.
                     {
                         reforgePrice = (item.ArmorRecipeValue() + item.value)/2;
 
@@ -137,10 +133,8 @@ namespace ArmorReforge
                         int index = rand.Next(accModifier.Length);
                         item.prefix = accModifier[index];
                     }
-                    //Main.NewText("Prefix: " + item.prefix);
                     if (item.value < 2) // If there is no default assigned value for armor
                         item.value = item.ArmorRecipeValue();
-                    //Main.NewText("ItemValue: " + item.value);
                 }
             }
             public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
@@ -153,7 +147,6 @@ namespace ArmorReforge
 
             public override void OnCreate(Item item, ItemCreationContext context)
             {
-                //Main.NewText("ItemValue: " + item.Name + " context: " + context);
                 if (item.IsArmor() && Main.rand.Next(2) == 0)
                 {
                     item.OverrideReforge();
