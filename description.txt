@@ -1,0 +1,22 @@
+[c/96cf70:Armor Modifiers] is a small mod that enables vanilla-based [c/96cf70:reforging] for armor.
+
+The Goblin Tinkerer can now add modifiers for your armor, albeit a bit more pricey compared to accessory counterparts.
+
+[c/96cf70:Changelog:]
+[c/f5ffc7:v1.2.1 (27/11/2021)]
+• Vanity items can now be reforged with vanilla prefixes.
+• Reforge pricing for armor and vanity items rebalanced.
+• Fixed an issue with incorrect prefixes on vanity items.
+[c/f5ffc7:v1.1.2 (14/11/2021)]
+• Updated to .NET Runtime 6.0.0
+[c/f5ffc7:v1.1.1 (04/10/2021)]
+• Fixed an issue with modded accessory changes.
+[c/f5ffc7:v1.1 (16/09/2021)]
+• Armor now has a chance of receiving a modifier upon crafting.
+• Minor bug fixes.
+[c/f5ffc7:v1.0.1 (16/09/2021)]
+• Support for modded armor and custom prefixes.
+• Reforge pricing balances for armor.
+• Initial release.
+
+Any other feedback is welcome, thanks for checking out this mod!
