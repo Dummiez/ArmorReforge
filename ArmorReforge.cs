@@ -107,7 +107,7 @@ namespace ArmorReforge
                     Random rand = new();
                     item.OverrideReforge();
                     item.RerollArmor();
-                    if (item.prefix == 0) // Allow rolling of vanity modifiers
+                    if (item.prefix == 0) // Allow rolling of vanity modifiers (no modded support?)
                     {
                         int[] accModifier = {
                             PrefixID.Hard,
