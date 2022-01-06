@@ -170,14 +170,6 @@ namespace ArmorReforge
                 }
                 base.UpdateInventory(item, player);
             }
-            public override void OnCreate(Item item, ItemCreationContext context)
-            {
-                if (item.IsArmor() && Main.rand.Next(2) == 0)
-                {
-                    item.OverrideReforge();
-                    item.RerollArmor();
-                }
-            }
         }
     }
 }
