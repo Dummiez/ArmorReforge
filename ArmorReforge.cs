@@ -9,7 +9,9 @@ namespace ArmorReforge
 {
     internal static class ArmorReforgeUtils
     {
-        public static bool IsArmor(this Item item) => (item.headSlot != -1 || item.bodySlot != -1 || item.legSlot != -1) && !item.vanity;
+        public static bool IsArmor(this Item item) => (item.headSlot != -1 || item.bodySlot != -1 || item.legSlot != -1);// && !item.vanity;
+        public static void OverrideReforge(this Item item) => item.accessory = (item.IsArmor() && !item.accessory) || item.accessory;
+        public static void RerollArmor(this Item item) => item.Prefix(-2);
         public static int ArmorRecipeValue(this Item item) // Get armor recipe value.
         {
             for (int i = 0; i < Recipe.numRecipes; i++)
@@ -75,6 +77,21 @@ namespace ArmorReforge
         //        );
         //    }
         //}
+        public class ArmorReforgePlayer : ModPlayer
+        {
+            public override void PostUpdate()
+            {
+                if (Main.InReforgeMenu && Main.reforgeItem.IsAir && !Main.mouseItem.IsAir)
+                {
+                    Main.mouseItem.OverrideReforge();
+                    if (Main.mouseItem.IsArmor() && Main.mouseItem.vanity) // This allows vanity items to be used in reforging.
+                    {
+                        Main.mouseItem.vanity = false;
+                        Main.mouseItem.canBePlacedInVanityRegardlessOfConditions = true;
+                    }
+                }
+            }
+        }
         public class ArmorReforgeItem : GlobalItem
         {
             public override bool ReforgePrice(Item item, ref int reforgePrice, ref bool canApplyDiscount)
@@ -128,7 +145,7 @@ namespace ArmorReforge
                 if (item.IsArmor())
                 {
                     var moddedPrefixes = PrefixLoader.GetPrefixesInCategory(PrefixCategory.Accessory);
-                    List<int> allowedPrefixes = new List<int>();
+                    List<int> allowedPrefixes = new();
                     foreach (var prefix in ArmorReforgeUtils.accModifier)
                     {
                         allowedPrefixes.Add(prefix);
@@ -140,6 +157,26 @@ namespace ArmorReforge
                     return allowedPrefixes[rand.Next(allowedPrefixes.Count)];
                 }
                 return base.ChoosePrefix(item, rand);
+            }
+            public override void UpdateInventory(Item item, Player player)
+            {
+                if (item.IsArmor())
+                    item.OverrideReforge();
+
+                if (item.IsArmor() && item.canBePlacedInVanityRegardlessOfConditions && item.vanity == false) // This allows vanity items to be used in reforging.
+                {
+                    item.vanity = true;
+                    item.canBePlacedInVanityRegardlessOfConditions = false;
+                }
+                base.UpdateInventory(item, player);
+            }
+            public override void OnCreate(Item item, ItemCreationContext context)
+            {
+                if (item.IsArmor() && Main.rand.Next(2) == 0)
+                {
+                    item.OverrideReforge();
+                    item.RerollArmor();
+                }
             }
         }
     }
