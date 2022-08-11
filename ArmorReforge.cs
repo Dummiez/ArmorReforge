@@ -1,4 +1,4 @@
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 using System.Collections.Generic;
 using System;
@@ -9,27 +9,27 @@ namespace ArmorReforge
 {
     internal static class ArmorReforgeUtils
     {
-        public static bool IsArmor(this Item item) => (item.headSlot != -1 || item.bodySlot != -1 || item.legSlot != -1);// && !item.vanity;
-        public static void OverrideReforge(this Item item) => item.accessory = (item.IsArmor() && !item.accessory) || item.accessory;
-        public static void RerollArmor(this Item item) => item.Prefix(-2);
-        public static int ArmorRecipeValue(this Item item) // Get armor recipe value.
+        internal static bool IsArmor(this Item item) => (item.headSlot != -1 || item.bodySlot != -1 || item.legSlot != -1);// && !item.vanity;
+        internal static void OverrideReforge(this Item item) => item.accessory = (item.IsArmor() && !item.accessory) || item.accessory;
+        internal static void RerollArmor(this Item item) => item.Prefix(-2);
+        internal static int ArmorRecipeValue(this Item item) // Get armor recipe value.
         {
-            for (int i = 0; i < Recipe.numRecipes; i++)
+            foreach (var recipe in Main.recipe)
             {
-                if (Main.recipe[i].HasResult(item.netID))
+                if (recipe.HasResult(item.netID))
                 {
-                    int armorValue = 0;
-                    List<Item> getIngredients = Main.recipe[i].requiredItem;
+                    var recipeValue = 0;
+                    List<Item> getIngredients = recipe.requiredItem;
                     foreach (var ingredient in getIngredients)
                     {
-                        armorValue += (ingredient.value * ingredient.stack);
+                        recipeValue += (ingredient.value * ingredient.stack);
                     }
-                    return (int)(armorValue + (item.rare * armorValue) * 0.1) / 3;
+                    return (int)(recipeValue + (item.rare * recipeValue) * 0.1) / 3;
                 }
             }
             return item.value;
         }
-        public static readonly int[] accModifier = {
+        internal static readonly int[] accModifier = { // Vanilla modifiers
                             PrefixID.Hard,
                             PrefixID.Guarding,
                             PrefixID.Armored,
@@ -51,14 +51,15 @@ namespace ArmorReforge
                             PrefixID.Arcane
                         };
     }
-    public class ArmorReforge : Mod
+    internal class ArmorReforge : Mod
     {
         internal static ArmorReforge Instance;
+        //internal Item hoveredItem;
         //internal const string ModifyArmorReforgeConfig_Permission = "ModifyArmorReforgeConfig";
         //internal const string ModifyArmorReforgeConfig_Display = "Modify ArmorReforge Config";
-
         public override void Load()
         {
+            On.Terraria.UI.ItemSlot.MouseHover_ItemArray_int_int += ItemSlot_MouseHover_ItemArray_int_int;
             Instance = this;
         }
         public override void Unload()
@@ -77,22 +78,52 @@ namespace ArmorReforge
         //        );
         //    }
         //}
-        public class ArmorReforgePlayer : ModPlayer
+        private void ItemSlot_MouseHover_ItemArray_int_int(On.Terraria.UI.ItemSlot.orig_MouseHover_ItemArray_int_int orig, Item[] inv, int context, int slot) // credits to jopo
+        {
+            orig(inv, context, slot);
+            // EquipArmorVanity = 9;
+            // EquipAccessoryVanity = 11;
+            // EquipAccessory = 10;
+            //hoveredItem = null;
+            if (context == 10) // disable armor on accessory
+            {
+                //int socialAccessories = -1;
+                //if (slot < (socialAccessories == -1 ? 18 + Main.LocalPlayer.GetAmountOfExtraAccessorySlotsToShow() : 13 + socialAccessories))
+                if (Main.mouseItem.IsArmor())
+                {
+                    Main.mouseItem.accessory = false;
+                    //hoveredItem = Main.HoverItem;
+                    //Main.HoverItem.social = false;
+                }
+            }
+            else if (context == 5) // reforge slot selected
+            {
+                if (Main.mouseItem.IsArmor())
+                    Main.mouseItem.OverrideReforge();
+            }
+            //if (context == 9 && ModContent.GetInstance<ServerConfig>().SocialArmor)
+            //{
+            //    hoveredItem = Main.HoverItem;
+            //    Main.HoverItem.social = false;
+            //}
+        }
+        internal class ArmorReforgePlayer : ModPlayer
         {
             public override void PostUpdate()
             {
+                //Main.NewText("Item: " + Main.mouseItem.Name + " Hover: " + Player.mouseInterface + " Cursor: " + Main.cursorOverride);
                 if (Main.InReforgeMenu && Main.reforgeItem.IsAir && !Main.mouseItem.IsAir)
                 {
-                    Main.mouseItem.OverrideReforge();
+                    //Main.mouseItem.OverrideReforge();
                     if (Main.mouseItem.IsArmor() && Main.mouseItem.vanity) // This allows vanity items to be used in reforging.
                     {
                         Main.mouseItem.vanity = false;
-                        Main.mouseItem.canBePlacedInVanityRegardlessOfConditions = true;
+                        Main.mouseItem.canBePlacedInVanityRegardlessOfConditions = false;
                     }
                 }
             }
         }
-        public class ArmorReforgeItem : GlobalItem
+        internal class ArmorReforgeItem : GlobalItem
         {
             public override bool ReforgePrice(Item item, ref int reforgePrice, ref bool canApplyDiscount)
             {
@@ -108,11 +139,11 @@ namespace ArmorReforge
 
                         if (reforgePrice < 2) // Manually assign a price value based on defense if value can't be determined by recipe.
                         {
-                            reforgePrice = (item.defense * 1500 * Math.Abs(item.rare + 2)) / 2;
+                            reforgePrice = (item.defense * 2500 * Math.Abs(item.rare + 2)) / 2;
                         }
                     }
                     if (item.value < 2 && reforgePrice < 2)
-                        reforgePrice = 20000;
+                        reforgePrice = 20000; // 2 gold
                 }
                 return base.ReforgePrice(item, ref reforgePrice, ref canApplyDiscount);
             }
@@ -121,7 +152,7 @@ namespace ArmorReforge
                 if (item.IsArmor())
                 {
                     if (item.value < 2) // If there is no default assigned value for armor
-                        item.value = item.ArmorRecipeValue();
+                        item.value = item.ArmorRecipeValue();                    
                 }
             }
             public override bool? PrefixChance(Item item, int pre, UnifiedRandom rand)
@@ -134,10 +165,12 @@ namespace ArmorReforge
                     }
                     if (pre == -1)
                     {
-                        return rand.Next(2) == 0; // 50% chance to get random prefix on item creation
+                        if (item.maxStack > 1) // no prefixes on crafted stackable items
+                            return false;
+
+                        return rand.NextBool(2); // 50% chance to get random prefix on item creation
                     }
                 }
-
                 return base.PrefixChance(item, pre, rand);
             }
             public override int ChoosePrefix(Item item, UnifiedRandom rand)
@@ -160,9 +193,10 @@ namespace ArmorReforge
             }
             public override void UpdateInventory(Item item, Player player)
             {
+                //Main.NewText("Item: " + item.Name + " Value: " + item.);
                 if (item.IsArmor())
-                    item.OverrideReforge();
-
+                    item.accessory = false;
+                //    item.OverrideReforge();
                 if (item.IsArmor() && item.canBePlacedInVanityRegardlessOfConditions && item.vanity == false) // This allows vanity items to be used in reforging.
                 {
                     item.vanity = true;
