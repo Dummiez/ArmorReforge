@@ -1,0 +1,6 @@
+displayName = Armor Modifiers & Reforging
+author = Aitherix
+version = 1.3.5
+hideCode = true
+hideResources = true
+includeSource = false
