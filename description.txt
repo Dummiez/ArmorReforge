@@ -3,6 +3,21 @@
 The Goblin Tinkerer can now add modifiers for your armor, albeit a bit more pricey compared to accessory counterparts.
 
 [c/96cf70:Changelog:]
+[c/f5ffc7:v1.3.5 (07/08/2022)]
+• Stable release update.
+[c/f5ffc7:v1.3.4 (09/07/2022)]
+• Removed prefixes on item creation for stackable armor.
+• Updated workshop mod icon.
+[c/f5ffc7:v1.3.3 (07/06/2022)]
+• Fixed an issue where armor could be placed on accessory slots.
+[c/f5ffc7:v1.3.2 (02/06/2022)]
+• Stable release update.
+• Minor bug fixes.
+[c/f5ffc7:v1.3.1 (01/05/2022)]
+• Stable release update.
+[c/f5ffc7:v1.3 (06/01/2022)]
+• Compatibility support for Auto Reforge (credits to SadOnion!)
+• Vanity items can now be reforged with modded prefixes.
 [c/f5ffc7:v1.2.1 (27/11/2021)]
 • Vanity items can now be reforged with vanilla prefixes.
 • Reforge pricing for armor and vanity items rebalanced.
@@ -19,4 +34,4 @@ The Goblin Tinkerer can now add modifiers for your armor, albeit a bit more pric
 • Reforge pricing balances for armor.
 • Initial release.
 
-Any other feedback is welcome, thanks for checking out this mod!
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2805399398]Want additional stats for pets, mounts and summons? Check out Equipment Modifiers![/url]
