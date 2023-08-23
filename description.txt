@@ -3,6 +3,14 @@
 The Goblin Tinkerer can now add modifiers for your armor, albeit a bit more pricey compared to accessory counterparts.
 
 [c/96cf70:Changelog:]
+[c/f5ffc7:v1.4.1 (22/08/2023)]
+• Compatibility update for tModLoader 1.4.4.
+• Fixed reforge modifiers not applying to players.
+• Removed messages clogging debug log.
+[c/f5ffc7:v1.3.8 (14/08/2022)]
+• Fixes an issue with the version checker.
+[c/f5ffc7:v1.3.7 (13/08/2022)]
+• Added new version notifier.
 [c/f5ffc7:v1.3.5 (07/08/2022)]
 • Stable release update.
 [c/f5ffc7:v1.3.4 (09/07/2022)]
